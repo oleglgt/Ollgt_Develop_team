@@ -1,0 +1,77 @@
+name: Telegram Notifications
+
+on:
+  issues:
+    types: [opened, labeled, closed]
+  issue_comment:
+    types: [created]
+  pull_request:
+    types: [opened, closed]
+  release:
+    types: [published]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram notification
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          EVENT="${{ github.event_name }}"
+          ACTION="${{ github.event.action }}"
+          
+          case "$EVENT" in
+            "issues")
+              ISSUE_NUM="${{ github.event.issue.number }}"
+              ISSUE_TITLE="${{ github.event.issue.title }}"
+              case "$ACTION" in
+                "opened")
+                  MSG="📥 <b>New Issue</b> #${ISSUE_NUM}\n${ISSUE_TITLE}"
+                  ;;
+                "labeled")
+                  LABEL="${{ github.event.label.name }}"
+                  MSG="🏷 <b>Label added:</b> ${LABEL}\n#${ISSUE_NUM}: ${ISSUE_TITLE}"
+                  ;;
+                "closed")
+                  MSG="✅ <b>Issue closed</b> #${ISSUE_NUM}\n${ISSUE_TITLE}"
+                  ;;
+              esac
+              ;;
+            "issue_comment")
+              ISSUE_NUM="${{ github.event.issue.number }}"
+              ACTOR="${{ github.actor }}"
+              BODY=$(echo "${{ github.event.comment.body }}" | head -c 200)
+              MSG="💬 <b>${ACTOR}</b> in #${ISSUE_NUM}:\n${BODY}"
+              ;;
+            "pull_request")
+              PR_NUM="${{ github.event.pull_request.number }}"
+              PR_TITLE="${{ github.event.pull_request.title }}"
+              case "$ACTION" in
+                "opened")
+                  MSG="🔀 <b>New PR</b> #${PR_NUM}\n${PR_TITLE}"
+                  ;;
+                "closed")
+                  MERGED="${{ github.event.pull_request.merged }}"
+                  if [ "$MERGED" = "true" ]; then
+                    MSG="✅ <b>PR merged</b> #${PR_NUM}\n${PR_TITLE}"
+                  else
+                    MSG="❌ <b>PR closed</b> #${PR_NUM}\n${PR_TITLE}"
+                  fi
+                  ;;
+              esac
+              ;;
+            "release")
+              TAG="${{ github.event.release.tag_name }}"
+              NAME="${{ github.event.release.name }}"
+              URL="${{ github.event.release.html_url }}"
+              MSG="🚀 <b>Release ${TAG}</b>\n${NAME}\n${URL}"
+              ;;
+          esac
+          
+          if [ -n "$MSG" ]; then
+            curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              -H "Content-Type: application/json" \
+              -d "{\"chat_id\": \"${TELEGRAM_CHAT_ID}\", \"text\": \"${MSG}\", \"parse_mode\": \"HTML\"}"
+          fi
