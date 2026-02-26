@@ -137,7 +137,9 @@ def poll_cycle() -> int:
     
     for label, role in roles:
         try:
+            log.info(f"Polling for {label}...")
             issues = get_issues_by_label(label)
+            log.info(f"Found {len(issues)} issue(s) for {label}")
             for issue in issues:
                 if issue["number"] not in processed_issues:
                     dispatch_to_agent(role, issue)
@@ -195,7 +197,7 @@ def main():
             if dispatched > 0:
                 log.info(f"Dispatched {dispatched} task(s)")
             else:
-                log.debug("No new tasks")
+                 log.info("No new tasks")
             time.sleep(POLL_INTERVAL)
     except KeyboardInterrupt:
         console.print("\n[yellow]Shutting down...[/yellow]")
