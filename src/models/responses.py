@@ -1,8 +1,4 @@
-"""Response models for the Hello World API.
-
-This module defines Pydantic models used for API responses,
-ensuring type safety and automatic validation.
-"""
+"""Response models for API endpoints."""
 
 from pydantic import BaseModel, Field
 
@@ -11,7 +7,7 @@ class HelloResponse(BaseModel):
     """Response model for hello endpoint.
     
     Attributes:
-        message: The greeting message to be returned.
+        message: A greeting message string.
     """
     
     message: str = Field(
@@ -20,11 +16,12 @@ class HelloResponse(BaseModel):
         example="Hello, World!"
     )
     
-    class Config:
-        """Pydantic model configuration."""
-        
-        json_schema_extra = {
-            "example": {
-                "message": "Hello, World!"
-            }
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "message": "Hello, World!"
+                }
+            ]
         }
+    }
