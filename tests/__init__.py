@@ -1,1 +1,1 @@
-"""Tests package for Hello World API."""
+"""Tests package."""
