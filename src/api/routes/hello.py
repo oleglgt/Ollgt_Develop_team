@@ -1,13 +1,9 @@
-"""Hello endpoint implementation.
-
-This module contains the hello endpoint that returns a simple greeting message.
-"""
+"""Hello endpoint route handler."""
 
 from fastapi import APIRouter
 
 from src.models.responses import HelloResponse
 
-# Create router for hello endpoints
 router = APIRouter(tags=["hello"])
 
 
@@ -16,14 +12,15 @@ router = APIRouter(tags=["hello"])
     response_model=HelloResponse,
     status_code=200,
     summary="Get hello message",
-    description="Returns a simple greeting message."
+    description="Returns a simple greeting message.",
+    response_description="Greeting message response"
 )
 async def get_hello() -> HelloResponse:
-    """Return a hello world greeting message.
+    """Return a Hello, World! greeting message.
     
     Returns:
-        HelloResponse: A response object containing the greeting message.
-        
+        HelloResponse: Response object containing the greeting message.
+    
     Example:
         >>> response = await get_hello()
         >>> response.message
