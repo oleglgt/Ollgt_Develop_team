@@ -1,4 +1,4 @@
-"""Models package for API response models."""
+"""Data models package."""
 
 from src.models.responses import HelloResponse
 
