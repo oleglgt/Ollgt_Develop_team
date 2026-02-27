@@ -1,99 +1,220 @@
-# 🤖 AI Development Team
+# Hello World API
 
-Multi-agent system for automated software development powered by Claude Agent SDK.
+A simple REST API built with FastAPI that provides a hello world endpoint. This project demonstrates best practices for structuring a FastAPI application with proper dependency management, testing, and documentation.
 
-## Architecture
+## Features
 
-Three specialized AI agents collaborate through GitHub Issues + Projects:
+- ✨ Simple and clean FastAPI application structure
+- 📝 Type hints and comprehensive docstrings
+- ✅ Full test coverage with pytest
+- 🔒 CORS middleware configured
+- 📖 Auto-generated OpenAPI documentation
+- 🎯 PEP 8 compliant code
 
-| Agent | Role | Responsibility |
-|-------|------|---------------|
-| **Architect** | Team Leader | Decomposes tasks into specs, creates subtasks, makes releases |
-| **Developer** | Teammate | Writes code based on specs, creates PRs |
-| **Tester** | Teammate | Validates code against specs, approves or returns |
+## Requirements
 
-## Workflow
+- Python 3.11 or higher
+- pip (Python package installer)
 
+## Installation
+
+1. **Clone the repository**
+
+```bash
+git clone <repository-url>
+cd <repository-directory>
 ```
-User creates Issue → Architect writes spec → Developer codes → Tester validates
-                                                    ↑                    ↓
-                                                    └── fix if rejected ←┘
-                                              Architect merges & releases
-                                              Tester verifies release ✅
+
+2. **Create a virtual environment**
+
+```bash
+python -m venv venv
+```
+
+3. **Activate the virtual environment**
+
+On Linux/macOS:
+```bash
+source venv/bin/activate
+```
+
+On Windows:
+```bash
+venv\Scripts\activate
+```
+
+4. **Install dependencies**
+
+```bash
+pip install -r requirements.txt
+```
+
+## Usage
+
+### Running the Application
+
+Start the FastAPI application using uvicorn:
+
+```bash
+uvicorn src.main:app --reload
+```
+
+The API will be available at `http://localhost:8000`
+
+**Options:**
+- `--reload`: Enable auto-reload on code changes (development only)
+- `--host 0.0.0.0`: Make the server accessible externally
+- `--port 8080`: Use a different port
+
+Example with custom port:
+```bash
+uvicorn src.main:app --reload --host 0.0.0.0 --port 8080
+```
+
+### API Endpoints
+
+#### GET /hello
+
+Returns a simple greeting message.
+
+**Request:**
+```bash
+curl -X GET "http://localhost:8000/hello"
+```
+
+**Response:**
+```json
+{
+  "message": "Hello, World!"
+}
+```
+
+#### GET /
+
+Root endpoint providing API information.
+
+**Request:**
+```bash
+curl -X GET "http://localhost:8000/"
+```
+
+**Response:**
+```json
+{
+  "name": "Hello World API",
+  "version": "0.1.0",
+  "docs": "/docs"
+}
+```
+
+### API Documentation
+
+FastAPI automatically generates interactive API documentation:
+
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+- **OpenAPI Schema**: http://localhost:8000/openapi.json
+
+## Running Tests
+
+Execute the test suite using pytest:
+
+```bash
+pytest
+```
+
+**Run with coverage report:**
+```bash
+pytest --cov=src --cov-report=html
+```
+
+This will generate a coverage report in the `htmlcov/` directory.
+
+**Run specific test file:**
+```bash
+pytest tests/test_hello.py
+```
+
+**Run with verbose output:**
+```bash
+pytest -v
 ```
 
 ## Project Structure
 
 ```
-├── .github/
-│   ├── workflows/          ← GitHub Actions (tests, deploy, Telegram notifications)
-│   └── ISSUE_TEMPLATE/     ← Templates for creating tasks
-├── agents/
-│   ├── architect.py        ← Architect agent configuration
-│   ├── developer.py        ← Developer agent configuration
-│   ├── tester.py           ← Tester agent configuration
-│   ├── orchestrator.py     ← Main orchestrator (polls GitHub, runs agents)
-│   └── tools/
-│       ├── github_tools.py ← Custom tools for GitHub API
-│       └── telegram_tools.py ← Custom tools for Telegram
-├── specs/                  ← Specs from Architect (markdown)
-├── src/                    ← Application code
-├── tests/                  ← Tests
-├── CLAUDE.md               ← Instructions for all agents
-├── .env.example            ← Environment variables template
-└── requirements.txt        ← Python dependencies
+.
+├── src/
+│   ├── __init__.py
+│   ├── main.py              # FastAPI application entry point
+│   ├── api/
+│   │   ├── __init__.py
+│   │   └── routes/
+│   │       ├── __init__.py
+│   │       └── hello.py     # Hello endpoint implementation
+│   └── models/
+│       ├── __init__.py
+│       └── responses.py     # Pydantic response models
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py          # Pytest configuration and fixtures
+│   └── test_hello.py        # Tests for hello endpoint
+├── requirements.txt         # Project dependencies
+├── .gitignore              # Git ignore rules
+└── README.md               # Project documentation
 ```
 
-## Quick Start
+## Development
 
-```bash
-# 1. Clone repo
-git clone https://github.com/oleglgt/Ollgt_Develop_team.git
-cd Ollgt_Develop_team
+### Code Quality Standards
 
-# 2. Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
+This project follows these standards:
+- **PEP 8**: Python code style guide
+- **Type Hints**: All functions have type annotations
+- **Docstrings**: All public functions and classes are documented
+- **Testing**: Minimum 80% test coverage
 
-# 3. Install dependencies
-pip install -r requirements.txt
+### Adding New Endpoints
 
-# 4. Configure environment
-cp .env.example .env
-# Edit .env with your API keys
+1. Create a new router file in `src/api/routes/`
+2. Define response models in `src/models/responses.py`
+3. Register the router in `src/main.py`
+4. Add tests in `tests/`
 
-# 5. Run orchestrator
-python agents/orchestrator.py
+Example:
+```python
+# src/api/routes/new_endpoint.py
+from fastapi import APIRouter
+from src.models.responses import YourResponse
+
+router = APIRouter(tags=["your-tag"])
+
+@router.get("/your-path")
+async def your_endpoint() -> YourResponse:
+    return YourResponse(...)
 ```
 
-## GitHub Project Setup
+## Dependencies
 
-Create a GitHub Project with these columns:
-- 📥 Inbox
-- 📋 Spec
-- 🛠 Development
-- 🧪 Testing
-- 🚀 Release
-- ✅ Done
+- **fastapi**: Modern, fast web framework for building APIs
+- **uvicorn**: ASGI server for running the application
+- **pydantic**: Data validation using Python type hints
+- **pytest**: Testing framework
+- **httpx**: HTTP client for testing
 
-## Labels
+See `requirements.txt` for specific versions.
 
-| Label | Purpose |
-|-------|---------|
-| `role:architect` | Tasks for architect agent |
-| `role:developer` | Tasks for developer agent |
-| `role:tester` | Tasks for tester agent |
-| `role:human` | Requires user attention |
-| `type:feature` | New feature |
-| `type:bug` | Bug fix |
-| `type:release` | Release task |
-| `priority:high/medium/low` | Priority levels |
+## License
 
-## Telegram Notifications
+This project is part of a demonstration and learning exercise.
 
-The system sends notifications to Telegram on:
-- Spec ready
-- PR created
-- Test results (approve/return)
-- Release published
-- Release verified
+## Contributing
+
+1. Create a feature branch
+2. Make your changes
+3. Ensure tests pass: `pytest`
+4. Submit a pull request
+
+## Support
+
+For issues or questions, please open an issue in the repository.
