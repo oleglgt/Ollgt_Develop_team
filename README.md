@@ -1,99 +1,194 @@
-# 🤖 AI Development Team
+# Hello World API
 
-Multi-agent system for automated software development powered by Claude Agent SDK.
+A simple REST API built with FastAPI that returns a "Hello, World!" message. This project demonstrates the basic setup of a FastAPI application with proper project structure, dependency management, and testing.
 
-## Architecture
+## Features
 
-Three specialized AI agents collaborate through GitHub Issues + Projects:
+- ✅ RESTful API with FastAPI
+- ✅ GET `/hello` endpoint returning a greeting message
+- ✅ Pydantic models for request/response validation
+- ✅ Automatic interactive API documentation (Swagger UI)
+- ✅ Type hints and comprehensive docstrings
+- ✅ Unit tests with pytest
+- ✅ CORS middleware enabled
+- ✅ PEP 8 compliant code
 
-| Agent | Role | Responsibility |
-|-------|------|---------------|
-| **Architect** | Team Leader | Decomposes tasks into specs, creates subtasks, makes releases |
-| **Developer** | Teammate | Writes code based on specs, creates PRs |
-| **Tester** | Teammate | Validates code against specs, approves or returns |
+## Requirements
 
-## Workflow
+- Python 3.11 or higher
+- pip (Python package installer)
 
+## Installation
+
+1. **Clone the repository** (or navigate to the project directory)
+
+2. **Create a virtual environment** (recommended):
+   ```bash
+   python -m venv venv
+   ```
+
+3. **Activate the virtual environment**:
+   - On Linux/macOS:
+     ```bash
+     source venv/bin/activate
+     ```
+   - On Windows:
+     ```bash
+     venv\Scripts\activate
+     ```
+
+4. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+## Running the Application
+
+### Using Uvicorn directly:
+```bash
+uvicorn src.main:app --reload
 ```
-User creates Issue → Architect writes spec → Developer codes → Tester validates
-                                                    ↑                    ↓
-                                                    └── fix if rejected ←┘
-                                              Architect merges & releases
-                                              Tester verifies release ✅
+
+### Using Python:
+```bash
+python -m src.main
+```
+
+The API will be available at `http://localhost:8000`
+
+### Application Configuration:
+- **Host**: 0.0.0.0 (all interfaces)
+- **Port**: 8000
+- **Reload**: Enabled (development mode)
+
+## API Documentation
+
+Once the application is running, you can access the interactive API documentation:
+
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+- **OpenAPI JSON**: http://localhost:8000/openapi.json
+
+## API Endpoints
+
+### Root Endpoint
+- **URL**: `/`
+- **Method**: `GET`
+- **Description**: Returns API information
+- **Response**:
+  ```json
+  {
+    "name": "Hello World API",
+    "version": "1.0.0",
+    "docs": "/docs"
+  }
+  ```
+
+### Hello Endpoint
+- **URL**: `/hello`
+- **Method**: `GET`
+- **Description**: Returns a greeting message
+- **Response**:
+  ```json
+  {
+    "message": "Hello, World!"
+  }
+  ```
+
+### Example cURL Request:
+```bash
+curl -X GET "http://localhost:8000/hello"
+```
+
+### Example Response:
+```json
+{
+  "message": "Hello, World!"
+}
+```
+
+## Running Tests
+
+Run all tests with pytest:
+```bash
+pytest
+```
+
+Run tests with verbose output:
+```bash
+pytest -v
+```
+
+Run tests with coverage report:
+```bash
+pytest --cov=src --cov-report=html
 ```
 
 ## Project Structure
 
 ```
-├── .github/
-│   ├── workflows/          ← GitHub Actions (tests, deploy, Telegram notifications)
-│   └── ISSUE_TEMPLATE/     ← Templates for creating tasks
-├── agents/
-│   ├── architect.py        ← Architect agent configuration
-│   ├── developer.py        ← Developer agent configuration
-│   ├── tester.py           ← Tester agent configuration
-│   ├── orchestrator.py     ← Main orchestrator (polls GitHub, runs agents)
-│   └── tools/
-│       ├── github_tools.py ← Custom tools for GitHub API
-│       └── telegram_tools.py ← Custom tools for Telegram
-├── specs/                  ← Specs from Architect (markdown)
-├── src/                    ← Application code
-├── tests/                  ← Tests
-├── CLAUDE.md               ← Instructions for all agents
-├── .env.example            ← Environment variables template
-└── requirements.txt        ← Python dependencies
+/
+├── src/
+│   ├── __init__.py
+│   ├── main.py              # FastAPI application entry point
+│   ├── api/
+│   │   ├── __init__.py
+│   │   └── routes/
+│   │       ├── __init__.py
+│   │       └── hello.py     # Hello endpoint implementation
+│   └── models/
+│       ├── __init__.py
+│       └── responses.py     # Pydantic response models
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py          # Pytest configuration and fixtures
+│   └── test_hello.py        # Tests for hello endpoint
+├── requirements.txt         # Project dependencies
+├── .gitignore              # Git ignore rules
+└── README.md               # Project documentation
 ```
 
-## Quick Start
+## Development
 
-```bash
-# 1. Clone repo
-git clone https://github.com/oleglgt/Ollgt_Develop_team.git
-cd Ollgt_Develop_team
+### Code Quality Standards
+- All code follows PEP 8 style guide
+- Type hints on all function signatures
+- Docstrings on all public functions and classes
+- Error handling with specific exceptions
+- Meaningful variable and function names
 
-# 2. Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
+### Adding New Endpoints
+1. Create a new route file in `src/api/routes/`
+2. Define response models in `src/models/responses.py`
+3. Include the router in `src/main.py`
+4. Add tests in `tests/`
 
-# 3. Install dependencies
-pip install -r requirements.txt
+## Dependencies
 
-# 4. Configure environment
-cp .env.example .env
-# Edit .env with your API keys
+- **fastapi**: Modern, fast web framework for building APIs
+- **uvicorn**: ASGI server for running FastAPI applications
+- **pydantic**: Data validation using Python type hints
+- **pytest**: Testing framework
+- **httpx**: HTTP client for testing
 
-# 5. Run orchestrator
-python agents/orchestrator.py
-```
+## License
 
-## GitHub Project Setup
+This project is open source and available under the MIT License.
 
-Create a GitHub Project with these columns:
-- 📥 Inbox
-- 📋 Spec
-- 🛠 Development
-- 🧪 Testing
-- 🚀 Release
-- ✅ Done
+## Contributing
 
-## Labels
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests to ensure everything passes
+5. Submit a pull request
 
-| Label | Purpose |
-|-------|---------|
-| `role:architect` | Tasks for architect agent |
-| `role:developer` | Tasks for developer agent |
-| `role:tester` | Tasks for tester agent |
-| `role:human` | Requires user attention |
-| `type:feature` | New feature |
-| `type:bug` | Bug fix |
-| `type:release` | Release task |
-| `priority:high/medium/low` | Priority levels |
+## Support
 
-## Telegram Notifications
+For issues, questions, or contributions, please refer to the project's issue tracker.
 
-The system sends notifications to Telegram on:
-- Spec ready
-- PR created
-- Test results (approve/return)
-- Release published
-- Release verified
+---
+
+**Version**: 1.0.0  
+**Python**: 3.11+  
+**Framework**: FastAPI
